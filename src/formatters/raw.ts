@@ -1,10 +1,10 @@
-import { isSmallNumber } from "../utils";
-import { formatSmallNumber } from "../helpers/small-numbers";
+import { isSmallNumber } from '../utils';
+import { formatSmallNumber } from '../helpers/small-numbers';
 
 export function formatRaw(value: number): string {
   // Special case: zero
   if (value === 0) {
-    return "0";
+    return '0';
   }
 
   // Special case: small number

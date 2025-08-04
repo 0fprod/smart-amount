@@ -1,5 +1,5 @@
 export function parseInputValue(amount: number | string): number {
-  return typeof amount === "string" ? parseFloat(amount) : amount;
+  return typeof amount === 'string' ? parseFloat(amount) : amount;
 }
 
 export function determineIfCompactShouldBeUsed(value: number, compact: boolean, autoCompact: boolean, compactThreshold: number): boolean {
@@ -7,7 +7,7 @@ export function determineIfCompactShouldBeUsed(value: number, compact: boolean, 
 }
 
 export function formatNaN(type: string, tokenSymbol: string): string {
-  return type === "currency" ? "$NaN" : type === "percentage" ? "NaN%" : `NaN ${tokenSymbol}`.trim();
+  return type === 'currency' ? '$NaN' : type === 'percentage' ? 'NaN%' : `NaN ${tokenSymbol}`.trim();
 }
 
 export function isSmallNumber(value: number): boolean {

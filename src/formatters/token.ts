@@ -1,5 +1,5 @@
-import { isSmallNumber } from "../utils";
-import { formatSmallNumber } from "../helpers/small-numbers";
+import { isSmallNumber } from '../utils';
+import { formatSmallNumber } from '../helpers/small-numbers';
 
 export function formatToken(
   value: number,
@@ -35,7 +35,7 @@ export function formatToken(
 }
 
 function formatZeroAsToken(decimals: number, tokenSymbol: string): string {
-  return `${new Intl.NumberFormat("en-US", {
+  return `${new Intl.NumberFormat('en-US', {
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(0)} ${tokenSymbol}`.trim();
@@ -43,35 +43,35 @@ function formatZeroAsToken(decimals: number, tokenSymbol: string): string {
 
 function formatSmallNumberAsToken(value: number, tokenSymbol: string, showSign: boolean, significantDigits?: number): string {
   const formattedValue = formatSmallNumber(value, significantDigits);
-  const sign = value > 0 && showSign ? "+" : "";
+  const sign = value > 0 && showSign ? '+' : '';
   return `${sign}${formattedValue} ${tokenSymbol}`.trim();
 }
 
 function formatRegularNumberAsToken(value: number, decimals: number, tokenSymbol: string, compact: boolean, showSign: boolean): string {
-  const sign = showSign && value > 0 ? "+" : "";
+  const sign = showSign && value > 0 ? '+' : '';
 
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat('en-US', {
     maximumFractionDigits: decimals,
     minimumFractionDigits: decimals,
-    notation: compact ? "compact" : "standard",
+    notation: compact ? 'compact' : 'standard',
   });
 
   return `${sign}${formatter.format(value)} ${tokenSymbol}`.trim();
 }
 
-function formatTokenWithFullDecimals(amountStr = "", tokenSymbol: string, showSign: boolean): string {
+function formatTokenWithFullDecimals(amountStr = '', tokenSymbol: string, showSign: boolean): string {
   if (!amountStr) {
-    return "";
+    return '';
   }
-  const sign = showSign && +amountStr > 0 ? "+" : "";
-  const parts = amountStr.split(".");
+  const sign = showSign && +amountStr > 0 ? '+' : '';
+  const parts = amountStr.split('.');
 
-  const integerPart = new Intl.NumberFormat("en-US", {
+  const integerPart = new Intl.NumberFormat('en-US', {
     useGrouping: true,
     maximumFractionDigits: 0,
   }).format(parseInt(parts[0]));
 
-  const decimalPart = parts.length > 1 ? `.${parts[1]}` : ".00";
+  const decimalPart = parts.length > 1 ? `.${parts[1]}` : '.00';
 
   return `${sign}${integerPart}${decimalPart} ${tokenSymbol}`.trim();
 }

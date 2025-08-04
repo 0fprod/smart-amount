@@ -1,5 +1,5 @@
 export function formatSmallNumber(value: number, significantDigits?: number): string {
-  if (value === 0) return "0";
+  if (value === 0) return '0';
 
   // Case: specific precision requested
   if (significantDigits) {
@@ -17,26 +17,26 @@ export function formatSmallNumber(value: number, significantDigits?: number): st
 
 function formatWithSignificantDigits(value: number, digits: number): string {
   const precisionStr = value.toPrecision(digits);
-  if (precisionStr.includes("e")) {
+  if (precisionStr.includes('e')) {
     return convertScientificToDecimal(precisionStr);
   }
   return precisionStr;
 }
 
 function convertScientificToDecimal(scientificNotation: string): string {
-  const isNegative = scientificNotation.startsWith("-");
+  const isNegative = scientificNotation.startsWith('-');
   const notation = isNegative ? scientificNotation.slice(1) : scientificNotation;
-  const [mantissa, exponent] = notation.split("e");
+  const [mantissa, exponent] = notation.split('e');
   const exponentValue = parseInt(exponent);
 
   if (exponentValue < 0) {
     const absExponent = Math.abs(exponentValue);
-    const cleanMantissa = mantissa.replace(".", "");
-    const decimalString = "0." + "0".repeat(absExponent - 1) + cleanMantissa;
-    return (isNegative ? "-" : "") + decimalString;
+    const cleanMantissa = mantissa.replace('.', '');
+    const decimalString = '0.' + '0'.repeat(absExponent - 1) + cleanMantissa;
+    return (isNegative ? '-' : '') + decimalString;
   }
 
-  const [base, exp] = scientificNotation.split("e+");
+  const [base, exp] = scientificNotation.split('e+');
   const num = parseFloat(base);
   const power = parseInt(exp, 10);
   let result = num;
@@ -58,5 +58,5 @@ function formatSmallButNotTinyNumber(value: number): string {
   const formatted = value.toFixed(decimalPlaces + 2);
 
   // Remove trailing zeros and decimal point if there are no decimals
-  return formatted.replace(/\.?0+$/, "");
+  return formatted.replace(/\.?0+$/, '');
 }

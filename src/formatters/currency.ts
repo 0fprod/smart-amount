@@ -1,7 +1,7 @@
-import type { LocaleCurrencyConfig } from "../types";
-import { COMMON_LOCALE_CURRENCIES } from "../constants";
-import { isSmallNumber } from "../utils";
-import { formatSmallNumber } from "../helpers/small-numbers";
+import type { LocaleCurrencyConfig } from '../types';
+import { COMMON_LOCALE_CURRENCIES } from '../constants';
+import { isSmallNumber } from '../utils';
+import { formatSmallNumber } from '../helpers/small-numbers';
 
 export function formatCurrency(
   value: number,
@@ -27,7 +27,7 @@ export function formatCurrency(
 
 function formatZeroAsCurrency(decimals: number, localeCurrency: LocaleCurrencyConfig): string {
   return new Intl.NumberFormat(localeCurrency.locale, {
-    style: "currency",
+    style: 'currency',
     currency: localeCurrency.currency,
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
@@ -41,17 +41,17 @@ function formatSmallNumberAsCurrency(
   localeCurrency: LocaleCurrencyConfig = COMMON_LOCALE_CURRENCIES.USD_US
 ): string {
   const formattedValue = formatSmallNumber(value, significantDigits);
-  const formattedValueWithoutSign = formattedValue.startsWith("-") ? formattedValue.slice(1) : formattedValue;
+  const formattedValueWithoutSign = formattedValue.startsWith('-') ? formattedValue.slice(1) : formattedValue;
 
   // Get currency symbol from Intl
   const currencySymbol = new Intl.NumberFormat(localeCurrency.locale, {
-    style: "currency",
+    style: 'currency',
     currency: localeCurrency.currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
   })
     .format(0)
-    .replace(/[\d,]/g, "")
+    .replace(/[\d,]/g, '')
     .trim();
 
   if (value > 0 && showSign) {
@@ -69,14 +69,14 @@ function formatRegularNumberAsCurrency(
   showSign: boolean,
   localeCurrency: LocaleCurrencyConfig
 ): string {
-  const sign = showSign && value > 0 ? "+" : "";
+  const sign = showSign && value > 0 ? '+' : '';
 
   const formatter = new Intl.NumberFormat(localeCurrency.locale, {
-    style: "currency",
+    style: 'currency',
     currency: localeCurrency.currency,
     maximumFractionDigits: decimals,
     minimumFractionDigits: decimals,
-    notation: compact ? "compact" : "standard",
+    notation: compact ? 'compact' : 'standard',
   });
 
   return sign + formatter.format(value);

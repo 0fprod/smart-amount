@@ -1,1 +1,1 @@
-export { formatSmallNumber } from "./small-numbers";
+export { formatSmallNumber } from './small-numbers';
