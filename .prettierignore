@@ -1,0 +1,12 @@
+node_modules
+dist
+coverage
+.husky
+.vscode
+.github
+.eslintrc.json
+.prettierrc
+.prettierignore
+.commitlintrc.json
+.lintstagedrc.js
+README.md
