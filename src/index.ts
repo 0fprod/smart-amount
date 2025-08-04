@@ -2,6 +2,47 @@ const MAX_SMALL_VALUE = 0.01;
 const DEFAULT_DECIMALS = 2;
 const DEFAULT_COMPACT_THRESHOLD = 10000;
 
+// Type definitions for multi-currency support
+type CurrencyCode = "USD" | "EUR" | "GBP" | "AED" | "INR" | "NGN";
+type LocaleCode = "en-US" | "en-GB" | "de-DE" | "es-ES" | "fr-FR" | "it-IT" | "ar-AE" | "hi-IN" | "en-NG";
+
+interface LocaleCurrencyConfig {
+  locale: LocaleCode;
+  currency: CurrencyCode;
+}
+
+// Helper function to create locale currency configurations
+function createLocaleCurrency(locale: LocaleCode, currency: CurrencyCode): LocaleCurrencyConfig {
+  return { locale, currency };
+}
+
+// Predefined common combinations
+export const COMMON_LOCALE_CURRENCIES = {
+  // Main currencies
+  USD_US: createLocaleCurrency("en-US", "USD"),
+  GBP_GB: createLocaleCurrency("en-GB", "GBP"),
+  GBP_US: createLocaleCurrency("en-US", "GBP"),
+
+  // EUR in different countries
+  EUR_US: createLocaleCurrency("en-US", "EUR"),
+  EUR_DE: createLocaleCurrency("de-DE", "EUR"),
+  EUR_ES: createLocaleCurrency("es-ES", "EUR"),
+  EUR_FR: createLocaleCurrency("fr-FR", "EUR"),
+  EUR_IT: createLocaleCurrency("it-IT", "EUR"),
+
+  // UAE Dirham
+  AED_AE: createLocaleCurrency("ar-AE", "AED"),
+  AED_US: createLocaleCurrency("en-US", "AED"),
+
+  // India Rupee
+  INR_IN: createLocaleCurrency("hi-IN", "INR"),
+  INR_US: createLocaleCurrency("en-US", "INR"),
+
+  // Nigeria Naira
+  NGN_NG: createLocaleCurrency("en-NG", "NGN"),
+  NGN_US: createLocaleCurrency("en-US", "NGN"),
+} as const;
+
 export interface FormatNumbersOptions {
   type?: "currency" | "percentage" | "token" | "raw";
   decimals?: number;
@@ -13,6 +54,7 @@ export interface FormatNumbersOptions {
   showSign?: boolean;
   rounded?: boolean;
   fullDecimals?: boolean;
+  localeCurrency?: LocaleCurrencyConfig; // New option
 }
 
 // Main function that delegates to specific functions
@@ -36,6 +78,7 @@ export function format(amount: number | string, options?: FormatNumbersOptions):
     showSign = false,
     rounded = false,
     fullDecimals = false,
+    localeCurrency = COMMON_LOCALE_CURRENCIES.USD_US,
   } = options ?? {};
   const value = parseInputValue(amount);
   const rawValue = amount.toString();
@@ -49,7 +92,7 @@ export function format(amount: number | string, options?: FormatNumbersOptions):
     case "raw":
       return formatRaw(value);
     default: // "currency"
-      return formatCurrency(value, decimals, shouldUseCompact, showSign, significantDigits);
+      return formatCurrency(value, decimals, shouldUseCompact, showSign, significantDigits, localeCurrency);
   }
 }
 
@@ -91,19 +134,26 @@ function formatPercentage(
   return formatRegularNumberWithSuffix(value, decimals, compact, showSign, "%", shouldShowDecimals(value, decimals));
 }
 
-function formatCurrency(value: number, decimals: number, compact: boolean, showSign: boolean, significantDigits?: number): string {
+function formatCurrency(
+  value: number,
+  decimals: number,
+  compact: boolean,
+  showSign: boolean,
+  significantDigits?: number,
+  localeCurrency: LocaleCurrencyConfig = COMMON_LOCALE_CURRENCIES.USD_US
+): string {
   // Special case: zero
   if (value === 0) {
-    return formatZeroAsCurrency(decimals);
+    return formatZeroAsCurrency(decimals, localeCurrency);
   }
 
   // Special case: small number
   if (isSmallNumber(value) && !compact) {
-    return formatSmallNumberAsCurrency(value, showSign, significantDigits);
+    return formatSmallNumberAsCurrency(value, showSign, significantDigits, localeCurrency);
   }
 
   // Normal case
-  return formatRegularNumberAsCurrency(value, decimals, compact, showSign);
+  return formatRegularNumberAsCurrency(value, decimals, compact, showSign, localeCurrency);
 }
 
 function formatRaw(value: number): string {
@@ -165,10 +215,10 @@ function shouldShowDecimals(value: number, decimals: number): number {
 }
 
 // Functions to format specific cases
-function formatZeroAsCurrency(decimals: number): string {
-  return new Intl.NumberFormat("en-US", {
+function formatZeroAsCurrency(decimals: number, localeCurrency: LocaleCurrencyConfig = COMMON_LOCALE_CURRENCIES.USD_US): string {
+  return new Intl.NumberFormat(localeCurrency.locale, {
     style: "currency",
-    currency: "USD",
+    currency: localeCurrency.currency,
     minimumFractionDigits: decimals,
     maximumFractionDigits: decimals,
   }).format(0);
@@ -196,16 +246,32 @@ function formatSmallNumberWithSuffix(value: number, showSign: boolean, significa
   return `${sign}${formattedValue}${suffix}`;
 }
 
-function formatSmallNumberAsCurrency(value: number, showSign: boolean, significantDigits?: number): string {
+function formatSmallNumberAsCurrency(
+  value: number,
+  showSign: boolean,
+  significantDigits?: number,
+  localeCurrency: LocaleCurrencyConfig = COMMON_LOCALE_CURRENCIES.USD_US
+): string {
   const formattedValue = formatSmallNumber(value, significantDigits);
   const formattedValueWithoutSign = formattedValue.startsWith("-") ? formattedValue.slice(1) : formattedValue;
 
+  // Get currency symbol from Intl
+  const currencySymbol = new Intl.NumberFormat(localeCurrency.locale, {
+    style: "currency",
+    currency: localeCurrency.currency,
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  })
+    .format(0)
+    .replace(/[\d,]/g, "")
+    .trim();
+
   if (value > 0 && showSign) {
-    return "+$" + formattedValueWithoutSign;
+    return `+${currencySymbol}${formattedValueWithoutSign}`;
   } else if (value < 0) {
-    return "-$" + formattedValueWithoutSign;
+    return `-${currencySymbol}${formattedValueWithoutSign}`;
   }
-  return "$" + formattedValue;
+  return `${currencySymbol}${formattedValue}`;
 }
 
 function formatSmallNumberAsToken(value: number, tokenSymbol: string, showSign: boolean, significantDigits?: number): string {
@@ -301,12 +367,18 @@ function formatRegularNumberWithSuffix(
   return `${sign}${formatter.format(truncatedValue)}${suffix}`;
 }
 
-function formatRegularNumberAsCurrency(value: number, decimals: number, compact: boolean, showSign: boolean): string {
+function formatRegularNumberAsCurrency(
+  value: number,
+  decimals: number,
+  compact: boolean,
+  showSign: boolean,
+  localeCurrency: LocaleCurrencyConfig
+): string {
   const sign = showSign && value > 0 ? "+" : "";
 
-  const formatter = new Intl.NumberFormat("en-US", {
+  const formatter = new Intl.NumberFormat(localeCurrency.locale, {
     style: "currency",
-    currency: "USD",
+    currency: localeCurrency.currency,
     maximumFractionDigits: decimals,
     minimumFractionDigits: decimals,
     notation: compact ? "compact" : "standard",

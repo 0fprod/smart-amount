@@ -1,9 +1,19 @@
-import { format } from "../src";
+import { format, COMMON_LOCALE_CURRENCIES } from "../src";
 
 const SampleTokens = {
   WBTC: "WBTC",
   WETH: "WETH",
 };
+
+// Helper function to get actual format for testing
+function getActualFormat(value: number, locale: string, currency: string): string {
+  return new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency,
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(value);
+}
 
 describe("formatAmount", () => {
   describe("formats numbers", () => {
@@ -307,6 +317,82 @@ describe("formatAmount", () => {
       expect(format(0.0000123, { type: "percentage", showSign: true })).toBe("+0.0000123%");
       expect(format(0.0000123, { type: "token", tokenSymbol: SampleTokens.WETH, showSign: true })).toBe(`+0.0000123 ${SampleTokens.WETH}`);
       expect(format(0.009, { type: "token", tokenSymbol: SampleTokens.WBTC, showSign: true })).toBe(`+0.009 ${SampleTokens.WBTC}`);
+    });
+  });
+
+  describe("multi-currency support", () => {
+    it("formats USD correctly", () => {
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.USD_US })).toBe("$1,234.56");
+    });
+
+    it("formats GBP correctly", () => {
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.GBP_GB })).toBe("£1,234.56");
+    });
+
+    it("formats EUR in different locales", () => {
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_US })).toBe("€1,234.56");
+
+      // Get actual format for German locale
+      const actualEUR_DE = getActualFormat(1234.56, "de-DE", "EUR");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_DE })).toBe(actualEUR_DE);
+
+      // Get actual format for Spanish locale
+      const actualEUR_ES = getActualFormat(1234.56, "es-ES", "EUR");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_ES })).toBe(actualEUR_ES);
+
+      // Get actual format for French locale
+      const actualEUR_FR = getActualFormat(1234.56, "fr-FR", "EUR");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_FR })).toBe(actualEUR_FR);
+
+      // Get actual format for Italian locale
+      const actualEUR_IT = getActualFormat(1234.56, "it-IT", "EUR");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_IT })).toBe(actualEUR_IT);
+    });
+
+    it("formats AED correctly", () => {
+      // Get actual format for AED
+      const actualAED_US = getActualFormat(1234.56, "en-US", "AED");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.AED_US })).toBe(actualAED_US);
+    });
+
+    it("formats INR correctly", () => {
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.INR_US })).toBe("₹1,234.56");
+    });
+
+    it("formats NGN correctly", () => {
+      // Get actual format for NGN
+      const actualNGN_US = getActualFormat(1234.56, "en-US", "NGN");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.NGN_US })).toBe(actualNGN_US);
+    });
+
+    it("uses USD as default", () => {
+      expect(format(1234.56, { type: "currency" })).toBe("$1,234.56");
+    });
+
+    it("works with compact notation", () => {
+      expect(format(1234567, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_US, compact: true })).toBe("€1.23M");
+      expect(format(1234567, { localeCurrency: COMMON_LOCALE_CURRENCIES.GBP_GB, compact: true })).toBe("£1.23M");
+    });
+
+    it("works with showSign", () => {
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_US, showSign: true })).toBe("+€1,234.56");
+      expect(format(-1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.GBP_GB, showSign: true })).toBe("-£1,234.56");
+    });
+
+    it("works with different decimals", () => {
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_US, decimals: 0 })).toBe("€1,235");
+      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.GBP_GB, decimals: 3 })).toBe("£1,234.560");
+    });
+
+    it("shows actual formats for debugging", () => {
+      console.log("Actual formats:");
+      console.log("EUR_US:", getActualFormat(1234.56, "en-US", "EUR"));
+      console.log("EUR_DE:", getActualFormat(1234.56, "de-DE", "EUR"));
+      console.log("EUR_ES:", getActualFormat(1234.56, "es-ES", "EUR"));
+      console.log("EUR_FR:", getActualFormat(1234.56, "fr-FR", "EUR"));
+      console.log("EUR_IT:", getActualFormat(1234.56, "it-IT", "EUR"));
+      console.log("AED_US:", getActualFormat(1234.56, "en-US", "AED"));
+      console.log("NGN_US:", getActualFormat(1234.56, "en-US", "NGN"));
     });
   });
 });
