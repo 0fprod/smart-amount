@@ -1,0 +1,71 @@
+{
+  "name": "@0fprod/smart-amount",
+  "version": "1.0.0",
+  "description": "A flexible TypeScript library for formatting numbers as currency, percentages, tokens, and raw values with intelligent small number handling",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist/**/*",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src tests --ext .ts",
+    "lint:fix": "eslint src tests --ext .ts --fix",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run type-check && npm run lint && npm test && npm run build",
+    "clean": "rm -rf dist coverage"
+  },
+  "keywords": [
+    "number-formatting",
+    "currency",
+    "percentage",
+    "token",
+    "formatter",
+    "typescript",
+    "intl",
+    "compact-notation",
+    "finance",
+    "crypto",
+    "web3"
+  ],
+  "author": "0fprod <franp.dev@protonmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0fprod/smart-amount.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0fprod/smart-amount/issues"
+  },
+  "homepage": "https://github.com/0fprod/smart-amount#readme",
+  "devDependencies": {
+    "@types/jest": "^29.5.8",
+    "@typescript-eslint/eslint-plugin": "^6.12.0",
+    "@typescript-eslint/parser": "^6.12.0",
+    "eslint": "^8.54.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.1",
+    "tsup": "^8.0.1",
+    "typescript": "^5.3.2"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
