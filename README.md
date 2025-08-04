@@ -59,7 +59,7 @@ format(1234567, { type: 'currency', compact: true });
 // Output: "$1.23M"
 
 format(1234567, { type: 'percentage', compact: true });
-// Output: "123.46M%"
+// Output: "1.23M%"
 
 // Auto-compact based on threshold
 format(1234567, { type: 'currency', autoCompact: true });
@@ -125,6 +125,28 @@ COMMON_LOCALE_CURRENCIES.NGN_US  // NGN 1,234.56
 - **Internationalization support**: Uses Intl API for locale-aware formatting
 - **TypeScript support**: Full type definitions included
 - **Zero dependencies**: Lightweight and fast
+- **Comprehensive testing**: 80+ tests covering all functionality
+- **Modular architecture**: Clean separation of concerns with dedicated formatters
+
+## Project Structure
+
+The library is organized with a clean, modular architecture:
+
+```
+src/
+├── index.ts              # Main entry point (re-exports everything)
+├── types.ts              # TypeScript interfaces and types
+├── constants.ts          # Constants and configurations
+├── utils.ts              # Utility functions
+├── formatters/
+│   ├── index.ts          # Main format function
+│   ├── currency.ts       # Currency formatting logic
+│   ├── percentage.ts     # Percentage formatting logic
+│   ├── token.ts          # Token formatting logic
+│   └── raw.ts           # Raw number formatting logic
+└── helpers/
+    └── small-numbers.ts  # Small number handling logic
+```
 
 ## API
 
@@ -145,6 +167,23 @@ Formats a number according to the specified options.
 - `showSign`: Show + sign for positive values and - for negative values
 - `rounded`: Round small numbers to zero
 - `fullDecimals`: Preserve full decimal precision for tokens
+
+## Development
+
+### Running Tests
+
+```bash
+npm test              # Run all tests
+npm run test:watch    # Run tests in watch mode
+npm run test:coverage # Run tests with coverage report
+```
+
+### Building
+
+```bash
+npm run build         # Build for production
+npm run dev           # Build in watch mode
+```
 
 ## License
 
