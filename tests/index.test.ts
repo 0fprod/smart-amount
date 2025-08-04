@@ -47,11 +47,11 @@ describe("format - Integration Tests", () => {
 
   describe("edge cases integration", () => {
     it("handles undefined input", () => {
-      expect(format(undefined as any)).toBe("");
+      expect(format(undefined as unknown as number)).toBe("");
     });
 
     it("handles null input", () => {
-      expect(format(null as any)).toBe("");
+      expect(format(null as unknown as number)).toBe("");
     });
 
     it("handles NaN input", () => {

@@ -1,7 +1,7 @@
 # Smart Amount
 
-<!-- [![CI](https://github.com/0fprod/smart-amount/actions/workflows/ci.yml/badge.svg)](https://github.com/0fprod/smart-amount/actions/workflows/ci.yml) -->
-<!-- [![npm version](https://badge.fury.io/js/%400fprod%2Fsmart-amount.svg)](https://badge.fury.io/js/%400fprod%2Fsmart-amount) -->
+[![CI](https://github.com/0fprod/smart-amount/actions/workflows/ci.yml/badge.svg)](https://github.com/0fprod/smart-amount/actions/workflows/ci.yml)
+[![npm version](https://badge.fury.io/js/%400fprod%2Fsmart-amount.svg)](https://badge.fury.io/js/%400fprod%2Fsmart-amount)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 
