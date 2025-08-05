@@ -1,8 +1,5 @@
 // Re-export types
-export type { FormatNumbersOptions, LocaleCurrencyConfig, CurrencyCode, LocaleCode } from './types';
-
-// Re-export constants
-export { COMMON_LOCALE_CURRENCIES } from './constants';
+export type { FormatNumbersOptions, CurrencyCode, LocaleCode } from './types';
 
 // Re-export main function
 export { format } from './formatters';

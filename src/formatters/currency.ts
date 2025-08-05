@@ -1,5 +1,4 @@
-import type { LocaleCurrencyConfig } from '../types';
-import { COMMON_LOCALE_CURRENCIES } from '../constants';
+import type { LocaleCode, CurrencyCode } from '../types';
 import { isSmallNumber } from '../utils';
 import { formatSmallNumber } from '../helpers/small-numbers';
 
@@ -9,7 +8,7 @@ export function formatCurrency(
   compact: boolean,
   showSign: boolean,
   significantDigits?: number,
-  localeCurrency: LocaleCurrencyConfig = COMMON_LOCALE_CURRENCIES.USD_US
+  localeCurrency: { locale: LocaleCode; currency: CurrencyCode } = { locale: 'en-US', currency: 'USD' }
 ): string {
   // Special case: zero
   if (value === 0) {
@@ -25,7 +24,7 @@ export function formatCurrency(
   return formatRegularNumberAsCurrency(value, decimals, compact, showSign, localeCurrency);
 }
 
-function formatZeroAsCurrency(decimals: number, localeCurrency: LocaleCurrencyConfig): string {
+function formatZeroAsCurrency(decimals: number, localeCurrency: { locale: LocaleCode; currency: CurrencyCode }): string {
   return new Intl.NumberFormat(localeCurrency.locale, {
     style: 'currency',
     currency: localeCurrency.currency,
@@ -38,7 +37,7 @@ function formatSmallNumberAsCurrency(
   value: number,
   showSign: boolean,
   significantDigits?: number,
-  localeCurrency: LocaleCurrencyConfig = COMMON_LOCALE_CURRENCIES.USD_US
+  localeCurrency: { locale: LocaleCode; currency: CurrencyCode } = { locale: 'en-US', currency: 'USD' }
 ): string {
   const formattedValue = formatSmallNumber(value, significantDigits);
   const formattedValueWithoutSign = formattedValue.startsWith('-') ? formattedValue.slice(1) : formattedValue;
@@ -67,7 +66,7 @@ function formatRegularNumberAsCurrency(
   decimals: number,
   compact: boolean,
   showSign: boolean,
-  localeCurrency: LocaleCurrencyConfig
+  localeCurrency: { locale: LocaleCode; currency: CurrencyCode }
 ): string {
   const sign = showSign && value > 0 ? '+' : '';
 

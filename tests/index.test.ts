@@ -1,47 +1,28 @@
-import { format, COMMON_LOCALE_CURRENCIES } from '../src';
+import { format } from '../src';
+import { normalizeSpaces } from './normalzeSpace';
 
 const SampleTokens = {
   WBTC: 'WBTC',
   WETH: 'WETH',
 };
 
-// Helper function to normalize spaces for testing
-function normalizeSpaces(str: string): string {
-  return str.replace(/\u00A0/g, ' '); // Replace non-breaking space with normal space
-}
-
-describe('format - Integration Tests', () => {
-  describe('API integration', () => {
-    it('formats currency with default options', () => {
-      expect(format(1234.56, { type: 'currency' })).toBe('$1,234.56');
+describe('format function', () => {
+  describe('currency formatting', () => {
+    it('should format USD currency correctly', () => {
+      expect(format(1234.56, { locale: 'en-US', currency: 'USD' })).toBe('$1,234.56');
     });
 
-    it('formats percentage with default options', () => {
-      expect(format(25.5, { type: 'percentage' })).toBe('25.50%');
+    it('should format EUR currency with US locale', () => {
+      expect(format(1234.56, { locale: 'en-US', currency: 'EUR' })).toBe('€1,234.56');
     });
 
-    it('formats token with default options', () => {
-      expect(format(1234.56, { type: 'token', tokenSymbol: SampleTokens.WBTC })).toBe(`1,234.56 ${SampleTokens.WBTC}`);
-    });
-
-    it('formats raw with default options', () => {
-      expect(format(1234.56, { type: 'raw' })).toBe('1234.56');
-    });
-  });
-
-  describe('multi-currency integration', () => {
-    it('formats USD correctly', () => {
-      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.USD_US })).toBe('$1,234.56');
-    });
-
-    it('formats EUR with different locales', () => {
-      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_US })).toBe('€1,234.56');
-      const result = format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_DE });
+    it('should format EUR currency with German locale', () => {
+      const result = format(1234.56, { locale: 'de-DE', currency: 'EUR' });
       expect(normalizeSpaces(result)).toBe('1.234,56 €');
     });
 
-    it('formats GBP correctly', () => {
-      expect(format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.GBP_GB })).toBe('£1,234.56');
+    it('should format GBP currency with UK locale', () => {
+      expect(format(1234.56, { locale: 'en-GB', currency: 'GBP' })).toBe('£1,234.56');
     });
   });
 

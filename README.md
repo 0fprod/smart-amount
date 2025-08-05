@@ -16,19 +16,19 @@ npm install @0fprod/smart-amount
 ## Usage
 
 ```typescript
-import { format, COMMON_LOCALE_CURRENCIES } from '@0fprod/smart-amount';
+import { format } from '@0fprod/smart-amount';
 
 // Currency formatting with multi-currency support
 format(1234.56, { type: 'currency' });
 // Output: "$1,234.56"
 
-format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_US });
+format(1234.56, { locale: 'en-US', currency: 'EUR' });
 // Output: "€1,234.56"
 
-format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.EUR_DE });
+format(1234.56, { locale: 'de-DE', currency: 'EUR' });
 // Output: "1.234,56 €"
 
-format(1234.56, { localeCurrency: COMMON_LOCALE_CURRENCIES.GBP_GB });
+format(1234.56, { locale: 'en-GB', currency: 'GBP' });
 // Output: "£1,234.56"
 
 // Percentage formatting
@@ -101,20 +101,20 @@ format("123456789.123456789", { type: 'token', tokenSymbol: 'ETH', fullDecimals:
 The library supports multiple currencies with their respective locales:
 
 ```typescript
-import { COMMON_LOCALE_CURRENCIES } from '@0fprod/smart-amount';
+// Available currencies:
+type CurrencyCode = 'USD' | 'EUR' | 'GBP' | 'AED' | 'INR' | 'NGN';
 
-// Available currency-locale combinations:
-COMMON_LOCALE_CURRENCIES.USD_US  // $1,234.56
-COMMON_LOCALE_CURRENCIES.EUR_US  // €1,234.56
-COMMON_LOCALE_CURRENCIES.EUR_DE  // 1.234,56 €
-COMMON_LOCALE_CURRENCIES.EUR_ES  // 1.234,56 €
-COMMON_LOCALE_CURRENCIES.EUR_FR  // 1 234,56 €
-COMMON_LOCALE_CURRENCIES.EUR_IT  // 1.234,56 €
-COMMON_LOCALE_CURRENCIES.GBP_GB  // £1,234.56
-COMMON_LOCALE_CURRENCIES.GBP_US  // £1,234.56
-COMMON_LOCALE_CURRENCIES.AED_US  // AED 1,234.56
-COMMON_LOCALE_CURRENCIES.INR_US  // ₹1,234.56
-COMMON_LOCALE_CURRENCIES.NGN_US  // NGN 1,234.56
+// Available locales:
+type LocaleCode = 'en-US' | 'en-GB' | 'de-DE' | 'es-ES' | 'fr-FR' | 'it-IT' | 'ar-AE' | 'hi-IN' | 'en-NG';
+
+// Examples:
+format(1234.56, { locale: 'en-US', currency: 'USD' });  // $1,234.56
+format(1234.56, { locale: 'en-US', currency: 'EUR' });  // €1,234.56
+format(1234.56, { locale: 'de-DE', currency: 'EUR' });  // 1.234,56 €
+format(1234.56, { locale: 'en-GB', currency: 'GBP' });  // £1,234.56
+format(1234.56, { locale: 'en-US', currency: 'AED' });  // AED 1,234.56
+format(1234.56, { locale: 'en-US', currency: 'INR' });  // ₹1,234.56
+format(1234.56, { locale: 'en-US', currency: 'NGN' });  // NGN 1,234.56
 ```
 
 ## Features
@@ -162,7 +162,8 @@ Formats a number according to the specified options.
 #### Options
 
 - `type`: The format type ('currency', 'percentage', 'token', 'raw')
-- `localeCurrency`: Currency-locale configuration (e.g., `COMMON_LOCALE_CURRENCIES.EUR_US`)
+- `locale`: Locale code for formatting (e.g., 'en-US', 'de-DE')
+- `currency`: Currency code for currency formatting (e.g., 'USD', 'EUR')
 - `decimals`: Number of decimal places (default: 2)
 - `compact`: Use compact notation for large numbers
 - `autoCompact`: Automatically apply compact notation based on threshold

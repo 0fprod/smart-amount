@@ -1,82 +1,88 @@
 import { formatCurrency } from '../../src/formatters/currency';
-import { COMMON_LOCALE_CURRENCIES } from '../../src/constants';
-
-// Helper function to normalize spaces for testing
-function normalizeSpaces(str: string): string {
-  return str.replace(/\u00A0/g, ' '); // Replace non-breaking space with normal space
-}
+import { normalizeSpaces } from '../normalzeSpace';
 
 describe('formatCurrency', () => {
-  describe('basic currency formatting', () => {
-    it('formats USD correctly', () => {
-      expect(formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$1,234.56');
+  describe('basic formatting', () => {
+    it('should format USD correctly', () => {
+      expect(formatCurrency(1234.56, 2, false, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$1,234.56');
     });
 
-    it('formats EUR with US locale', () => {
-      expect(formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.EUR_US)).toBe('€1,234.56');
+    it('should format EUR with US locale', () => {
+      expect(formatCurrency(1234.56, 2, false, false, undefined, { locale: 'en-US', currency: 'EUR' })).toBe('€1,234.56');
     });
 
-    it('formats EUR with German locale', () => {
-      const result = formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.EUR_DE);
+    it('should format EUR with German locale', () => {
+      const result = formatCurrency(1234.56, 2, false, false, undefined, { locale: 'de-DE', currency: 'EUR' });
       expect(normalizeSpaces(result)).toBe('1.234,56 €');
     });
 
-    it('formats GBP with UK locale', () => {
-      expect(formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.GBP_GB)).toBe('£1,234.56');
+    it('should format GBP with UK locale', () => {
+      expect(formatCurrency(1234.56, 2, false, false, undefined, { locale: 'en-GB', currency: 'GBP' })).toBe('£1,234.56');
+    });
+  });
+
+  describe('zero values', () => {
+    it('should format zero with decimals', () => {
+      expect(formatCurrency(0, 2, false, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$0.00');
     });
 
-    it('formats zero correctly', () => {
-      expect(formatCurrency(0, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$0.00');
-      expect(formatCurrency(0, 0, false, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$0');
+    it('should format zero without decimals', () => {
+      expect(formatCurrency(0, 0, false, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$0');
     });
   });
 
   describe('compact notation', () => {
-    it('formats with compact notation', () => {
-      expect(formatCurrency(1234567, 2, true, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$1.23M');
-      expect(formatCurrency(1234567, 2, true, false, undefined, COMMON_LOCALE_CURRENCIES.EUR_US)).toBe('€1.23M');
+    it('should format large numbers in compact notation', () => {
+      expect(formatCurrency(1234567, 2, true, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$1.23M');
+    });
+
+    it('should format EUR in compact notation', () => {
+      expect(formatCurrency(1234567, 2, true, false, undefined, { locale: 'en-US', currency: 'EUR' })).toBe('€1.23M');
     });
   });
 
   describe('sign display', () => {
-    it('shows positive sign when requested', () => {
-      expect(formatCurrency(1234.56, 2, false, true, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('+$1,234.56');
+    it('should show positive sign when requested', () => {
+      expect(formatCurrency(1234.56, 2, false, true, undefined, { locale: 'en-US', currency: 'USD' })).toBe('+$1,234.56');
     });
 
-    it('shows negative sign correctly', () => {
-      expect(formatCurrency(-1234.56, 2, false, true, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('-$1,234.56');
+    it('should show negative sign correctly', () => {
+      expect(formatCurrency(-1234.56, 2, false, true, undefined, { locale: 'en-US', currency: 'USD' })).toBe('-$1,234.56');
     });
   });
 
-  describe('decimal places', () => {
-    it('respects decimal places', () => {
-      expect(formatCurrency(1234.56, 0, false, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$1,235');
-      expect(formatCurrency(1234.56, 3, false, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$1,234.560');
+  describe('decimal handling', () => {
+    it('should round to specified decimals', () => {
+      expect(formatCurrency(1234.56, 0, false, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$1,235');
+    });
+
+    it('should show more decimals when requested', () => {
+      expect(formatCurrency(1234.56, 3, false, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$1,234.560');
     });
   });
 
   describe('small numbers', () => {
-    it('handles small numbers correctly', () => {
-      expect(formatCurrency(0.0000123, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$0.0000123');
+    it('should format very small numbers', () => {
+      expect(formatCurrency(0.0000123, 2, false, false, undefined, { locale: 'en-US', currency: 'USD' })).toBe('$0.0000123');
     });
 
-    it('handles small numbers with significant digits', () => {
-      expect(formatCurrency(0.0000123, 2, false, false, 2, COMMON_LOCALE_CURRENCIES.USD_US)).toBe('$0.000012');
+    it('should format small numbers with significant digits', () => {
+      expect(formatCurrency(0.0000123, 2, false, false, 2, { locale: 'en-US', currency: 'USD' })).toBe('$0.000012');
     });
   });
 
-  describe('multi-currency support', () => {
-    it('formats AED correctly', () => {
-      const result = formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.AED_US);
+  describe('other currencies', () => {
+    it('should format AED correctly', () => {
+      const result = formatCurrency(1234.56, 2, false, false, undefined, { locale: 'en-US', currency: 'AED' });
       expect(normalizeSpaces(result)).toBe('AED 1,234.56');
     });
 
-    it('formats INR correctly', () => {
-      expect(formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.INR_US)).toBe('₹1,234.56');
+    it('should format INR correctly', () => {
+      expect(formatCurrency(1234.56, 2, false, false, undefined, { locale: 'en-US', currency: 'INR' })).toBe('₹1,234.56');
     });
 
-    it('formats NGN correctly', () => {
-      const result = formatCurrency(1234.56, 2, false, false, undefined, COMMON_LOCALE_CURRENCIES.NGN_US);
+    it('should format NGN correctly', () => {
+      const result = formatCurrency(1234.56, 2, false, false, undefined, { locale: 'en-US', currency: 'NGN' });
       expect(normalizeSpaces(result)).toBe('NGN 1,234.56');
     });
   });

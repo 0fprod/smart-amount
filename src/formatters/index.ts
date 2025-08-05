@@ -1,5 +1,5 @@
 import type { FormatNumbersOptions } from '../types';
-import { DEFAULT_DECIMALS, DEFAULT_COMPACT_THRESHOLD, COMMON_LOCALE_CURRENCIES } from '../constants';
+import { DEFAULT_DECIMALS, DEFAULT_COMPACT_THRESHOLD } from '../constants';
 import { parseInputValue, determineIfCompactShouldBeUsed, formatNaN } from '../utils';
 import { formatCurrency } from './currency';
 import { formatPercentage, formatToken, formatRaw } from '..';
@@ -25,7 +25,8 @@ export function format(amount: number | string, options?: FormatNumbersOptions):
     showSign = false,
     rounded = false,
     fullDecimals = false,
-    localeCurrency = COMMON_LOCALE_CURRENCIES.USD_US,
+    locale = 'en-US',
+    currency = 'USD',
   } = options ?? {};
   const value = parseInputValue(amount);
   const rawValue = amount.toString();
@@ -39,6 +40,6 @@ export function format(amount: number | string, options?: FormatNumbersOptions):
     case 'raw':
       return formatRaw(value);
     default: // "currency"
-      return formatCurrency(value, decimals, shouldUseCompact, showSign, significantDigits, localeCurrency);
+      return formatCurrency(value, decimals, shouldUseCompact, showSign, significantDigits, { locale, currency });
   }
 }
