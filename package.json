@@ -1,6 +1,6 @@
 {
   "name": "@0fprod/smart-amount",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "A flexible TypeScript library for formatting numbers as currency, percentages, tokens, and raw values with intelligent small number handling",
   "main": "dist/index.js",
   "module": "dist/index.js",
